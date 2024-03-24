@@ -29,10 +29,12 @@ function init() {
     // Listen for click event on spin button:
     if (e.target === btnSpin) {
       const winningItemIndex = fetchWinningItemIndexFromApi();
-      // const easing = easingFunctions[dropdownEasingFunction.value];
-      // const easingFunction = easing.function;
       const duration = 2600;
-      wheel.spinToItem(winningItemIndex, duration, true, 2, 1);
+      if (winningItemIndex === "") {
+        wheel.spin(400)
+      } else {
+        wheel.spinToItem(parseInt(winningItemIndex), duration, true, 2, 1);
+      }
     }
 
     // Listen for click event on stop button:
@@ -52,7 +54,7 @@ function init() {
 
   function fetchWinningItemIndexFromApi() {
     // Simulate a call to the back-end
-    const indexToWin = 27;
+    const indexToWin = "2";
     return indexToWin;
   }
 
