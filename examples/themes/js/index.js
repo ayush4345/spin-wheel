@@ -1,6 +1,6 @@
-import {Wheel} from '../../../dist/spin-wheel-esm.js';
-import {loadFonts} from '../../../scripts/util.js';
-import {props} from './props.js';
+import { Wheel } from '../../../dist/spin-wheel-esm.js';
+import { loadFonts } from '../../../scripts/util.js';
+import { props } from './props.js';
 
 window.onload = async () => {
   await loadFonts(props.map(i => i.itemLabelFont));
@@ -9,30 +9,51 @@ window.onload = async () => {
 
 function init() {
 
-  const wheel = new Wheel(document.querySelector('.wheel-wrapper'));
+  const container = document.querySelector('.wheel-wrapper');
+  // const dropdownWinningItem = document.querySelector('select.winning-item');
+  // const dropdownEasingFunction = document.querySelector('select.easing-function');
+  // const dropdownRevolutions = document.querySelector('select.revolutions');
 
-  const dropdown = document.querySelector('select');
+  const btnSpin = document.querySelector('.gui-wrapper .btn-spin');
+  const btnStop = document.querySelector('.gui-wrapper .btn-stop');
 
-  // Initalise dropdown with the names of each example:
-  for (const p of props) {
-    const opt = document.createElement('option');
-    opt.textContent = p.name;
-    dropdown.append(opt);
+  window.wheel = new Wheel(document.querySelector('.wheel-wrapper'));
+
+  wheel.init({
+    ...props[0],
+    rotation: wheel.rotation, // Preserve value.
+  });
+
+  window.addEventListener('click', (e) => {
+
+    // Listen for click event on spin button:
+    if (e.target === btnSpin) {
+      const winningItemIndex = fetchWinningItemIndexFromApi();
+      // const easing = easingFunctions[dropdownEasingFunction.value];
+      // const easingFunction = easing.function;
+      const duration = 2600;
+      wheel.spinToItem(winningItemIndex, duration, true, 2, 1);
+    }
+
+    // Listen for click event on stop button:
+    if (e.target === btnStop) {
+      wheel.stop();
+    }
+
+  });
+
+  window.addEventListener('keyup', (e) => {
+
+    if (e.target && e.target.matches('#pointerAngle')) {
+      wheel.pointerAngle = parseInt(e.target.value) || 0;
+    }
+
+  });
+
+  function fetchWinningItemIndexFromApi() {
+    // Simulate a call to the back-end
+    const indexToWin = 27;
+    return indexToWin;
   }
-
-  // Handle dropdown change:
-  dropdown.onchange = () => {
-    wheel.init({
-      ...props[dropdown.selectedIndex],
-      rotation: wheel.rotation, // Preserve value.
-    });
-  };
-
-  // Select default:
-  dropdown.options[0].selected = 'selected';
-  dropdown.onchange();
-
-  // Save object globally for easy debugging.
-  window.wheel = wheel;
 
 }
